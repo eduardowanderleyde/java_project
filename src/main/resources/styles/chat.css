@@ -1,0 +1,47 @@
+.chat-container {
+    -fx-background-color: #f0f0f0;
+    -fx-padding: 10;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 3;
+    -fx-padding: 5;
+}
+
+.button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-padding: 8 15;
+    -fx-border-radius: 3;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #45a049;
+}
+
+.button:disabled {
+    -fx-background-color: #cccccc;
+    -fx-cursor: default;
+}
+
+.list-view {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 3;
+}
+
+.list-cell {
+    -fx-padding: 5;
+    -fx-background-color: transparent;
+}
+
+.list-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.list-cell:selected {
+    -fx-background-color: #e0e0e0;
+} 
