@@ -45,24 +45,28 @@ public class ChatController {
                 super.updateItem(message, empty);
                 if (empty || message == null) {
                     setText(null);
+                    setGraphic(null);
                     setStyle("");
                 } else {
+                    // Layout: Nome (negrito, menor), Mensagem, Horário (menor, cinza)
+                    VBox vbox = new VBox();
+                    Label sender = new Label(message.getSender());
+                    sender.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #6366f1;");
+                    Label content = new Label(message.getContent());
+                    content.setStyle("-fx-font-size: 15px; -fx-text-fill: #222; -fx-padding: 2 0 0 0;");
                     String time = message.getTimestamp() != null ? message.getTimestamp().toLocalTime().withNano(0).toString() : "";
-                    String display = String.format("%s\n%s  %s",
-                            message.getContent(),
-                            message.getSender(),
-                            time
-                    );
-                    setText(display);
-                    // Balão à direita se for do usuário atual, à esquerda se for de outro
-                    if (currentUsername != null && message.getSender().equals(currentUsername)) {
-                        setStyle("-fx-background-color: #a7f3d0; -fx-background-radius: 12; -fx-alignment: CENTER_RIGHT; -fx-padding: 8 16 8 32;");
-                    } else {
-                        setStyle("-fx-background-color: #e0e7ef; -fx-background-radius: 12; -fx-alignment: CENTER_LEFT; -fx-padding: 8 32 8 16;");
-                    }
+                    Label timeLabel = new Label(time);
+                    timeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #888; -fx-padding: 2 0 0 0;");
+                    vbox.getChildren().addAll(sender, content, timeLabel);
+                    vbox.setSpacing(0);
+                    setGraphic(vbox);
+                    setText(null);
+                    setStyle("");
                 }
             }
         });
+        messageList.getItems().clear();
+        messageHistory.clear();
     }
 
     @FXML
@@ -81,6 +85,9 @@ public class ChatController {
                         connectButton.setDisable(true);
                         usernameField.setDisable(true);
                         showAlert("Sucesso", "Conectado ao servidor!");
+                        // Limpa histórico local ao conectar
+                        messageList.getItems().clear();
+                        messageHistory.clear();
                     });
                 }
 
@@ -88,8 +95,11 @@ public class ChatController {
                 public void onMessage(String message) {
                     Message chatMessage = gson.fromJson(message, Message.class);
                     Platform.runLater(() -> {
-                        messageHistory.add(chatMessage);
-                        updateMessageList();
+                        // Evita duplicatas no histórico
+                        if (!messageHistory.contains(chatMessage)) {
+                            messageHistory.add(chatMessage);
+                            updateMessageList();
+                        }
                     });
                 }
 
