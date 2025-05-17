@@ -1,7 +1,9 @@
 package com.eduardowanderley.server;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.eduardowanderley.model.Message;
+import com.eduardowanderley.util.LocalDateTimeAdapter;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -17,7 +19,9 @@ public class ChatServer extends WebSocketServer {
     public ChatServer(int port) {
         super(new InetSocketAddress(port));
         this.connections = new HashSet<>();
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+            .registerTypeAdapter(java.time.LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
     }
 
     @Override

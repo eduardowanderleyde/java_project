@@ -2,6 +2,7 @@ package com.eduardowanderley.controller;
 
 import com.eduardowanderley.model.Message;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -16,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import com.eduardowanderley.util.LocalDateTimeAdapter;
 
 public class ChatController {
     @FXML private TextField usernameField;
@@ -25,24 +27,39 @@ public class ChatController {
     @FXML private Button joinRoomButton;
     @FXML private Button sendButton;
     @FXML private Button fileButton;
-    @FXML private ListView<String> messageList;
+    @FXML private ListView<Message> messageList;
 
     private WebSocketClient client;
     private String currentUsername;
     private String currentRoom;
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(java.time.LocalDateTime.class, new LocalDateTimeAdapter())
+        .create();
     private final List<Message> messageHistory = new ArrayList<>();
 
     @FXML
     public void initialize() {
         messageList.setCellFactory(lv -> new ListCell<>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            protected void updateItem(Message message, boolean empty) {
+                super.updateItem(message, empty);
+                if (empty || message == null) {
                     setText(null);
+                    setStyle("");
                 } else {
-                    setText(item);
+                    String time = message.getTimestamp() != null ? message.getTimestamp().toLocalTime().withNano(0).toString() : "";
+                    String display = String.format("%s\n%s  %s",
+                            message.getContent(),
+                            message.getSender(),
+                            time
+                    );
+                    setText(display);
+                    // Balão à direita se for do usuário atual, à esquerda se for de outro
+                    if (currentUsername != null && message.getSender().equals(currentUsername)) {
+                        setStyle("-fx-background-color: #a7f3d0; -fx-background-radius: 12; -fx-alignment: CENTER_RIGHT; -fx-padding: 8 16 8 32;");
+                    } else {
+                        setStyle("-fx-background-color: #e0e7ef; -fx-background-radius: 12; -fx-alignment: CENTER_LEFT; -fx-padding: 8 32 8 16;");
+                    }
                 }
             }
         });
@@ -159,15 +176,7 @@ public class ChatController {
 
     private void updateMessageList() {
         messageList.getItems().clear();
-        for (Message message : messageHistory) {
-            String displayText = String.format("[%s] %s: %s",
-                    message.getTimestamp(),
-                    message.getSender(),
-                    message.getType() == Message.MessageType.FILE ? 
-                            "Enviou um arquivo: " + message.getContent() : 
-                            message.getContent());
-            messageList.getItems().add(displayText);
-        }
+        messageList.getItems().addAll(messageHistory);
         messageList.scrollTo(messageList.getItems().size() - 1);
     }
 
