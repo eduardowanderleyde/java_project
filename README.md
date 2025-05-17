@@ -1,54 +1,54 @@
-# Chat em Tempo Real
+# Real-Time Chat
 
-Um aplicativo de chat em tempo real desenvolvido em Java com JavaFX e WebSocket.
+A real-time chat application developed in Java using JavaFX and WebSocket.
 
-## Funcionalidades
+## Features
 
-- Chat em tempo real usando WebSocket
-- Suporte a múltiplas salas de chat
-- Compartilhamento de arquivos
-- Interface gráfica moderna com JavaFX
-- Histórico de mensagens
-- Notificações de eventos (conexão, desconexão, etc.)
+- Real-time chat using WebSocket
+- Support for multiple chat rooms
+- File sharing
+- Modern graphical interface with JavaFX
+- Message history
+- Event notifications (connection, disconnection, etc.)
 
-## Requisitos
+## Requirements
 
-- Java 17 ou superior
-- Maven 3.6 ou superior
+- Java 17 or higher
+- Maven 3.6 or higher
 
-## Como executar
+## How to Run
 
-1. Clone o repositório:
+1. Clone the repository:
 
 ```bash
-git clone git@github.com:eduardowanderleyde/java_project.git
+git clone https://github.com/eduardowanderleyde/java_project.git
 ```
 
-2. Entre no diretório do projeto:
+2. Enter the project directory:
 
 ```bash
 cd java_project
 ```
 
-3. Compile o projeto:
+3. Build the project:
 
 ```bash
 mvn clean package
 ```
 
-4. Inicie o servidor:
+4. Start the server:
 
 ```bash
-java -cp target/java_project-1.0-SNAPSHOT.jar com.eduardowanderley.server.ChatServer
+mvn exec:java -Dexec.mainClass="com.eduardowanderley.server.ChatServer"
 ```
 
-5. Em outro terminal, inicie o cliente:
+5. In another terminal, start the client:
 
 ```bash
-java -cp target/java_project-1.0-SNAPSHOT.jar com.eduardowanderley.ChatApp
+mvn javafx:run -Dprism.order=sw
 ```
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 src/
@@ -60,6 +60,8 @@ src/
 │   │   │   └── Message.java
 │   │   ├── server/
 │   │   │   └── ChatServer.java
+│   │   ├── util/
+│   │   │   └── LocalDateTimeAdapter.java
 │   │   └── ChatApp.java
 │   └── resources/
 │       ├── fxml/
@@ -68,25 +70,25 @@ src/
 │           └── chat.css
 └── test/
     └── java/com/eduardowanderley/
-        └── (testes)
+        └── (tests)
 ```
 
-## Tecnologias Utilizadas
+## Technologies Used
 
-- JavaFX para a interface gráfica
-- Java-WebSocket para comunicação em tempo real
-- Gson para serialização JSON
-- Maven para gerenciamento de dependências
+- JavaFX for the graphical interface
+- Java-WebSocket for real-time communication
+- Gson for JSON serialization
+- Maven for dependency management
 
-## Como Usar
+## How to Use
 
-1. Inicie o servidor
-2. Inicie o cliente
-3. Digite seu nome e clique em "Conectar"
-4. Digite o nome da sala e clique em "Entrar na Sala"
-5. Comece a conversar!
-6. Use o botão "Arquivo" para compartilhar arquivos
+1. Start the server
+2. Start the client
+3. Enter your name and click "Connect"
+4. Enter the room name and click "Join Room"
+5. Start chatting!
+6. Use the "File" button to share files
 
-## Contribuindo
+## Contributing
 
-Sinta-se à vontade para contribuir com o projeto através de pull requests.
+Feel free to contribute to the project by submitting pull requests.

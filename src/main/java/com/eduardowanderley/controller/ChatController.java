@@ -2,6 +2,7 @@ package com.eduardowanderley.controller;
 
 import com.eduardowanderley.model.Message;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -16,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import com.eduardowanderley.util.LocalDateTimeAdapter;
 
 public class ChatController {
     @FXML private TextField usernameField;
@@ -25,27 +27,46 @@ public class ChatController {
     @FXML private Button joinRoomButton;
     @FXML private Button sendButton;
     @FXML private Button fileButton;
-    @FXML private ListView<String> messageList;
+    @FXML private ListView<Message> messageList;
 
     private WebSocketClient client;
     private String currentUsername;
     private String currentRoom;
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(java.time.LocalDateTime.class, new LocalDateTimeAdapter())
+        .create();
     private final List<Message> messageHistory = new ArrayList<>();
 
     @FXML
     public void initialize() {
         messageList.setCellFactory(lv -> new ListCell<>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            protected void updateItem(Message message, boolean empty) {
+                super.updateItem(message, empty);
+                if (empty || message == null) {
                     setText(null);
+                    setGraphic(null);
+                    setStyle("");
                 } else {
-                    setText(item);
+                    // Layout: Nome (negrito, menor), Mensagem, Horário (menor, cinza)
+                    VBox vbox = new VBox();
+                    Label sender = new Label(message.getSender());
+                    sender.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #6366f1;");
+                    Label content = new Label(message.getContent());
+                    content.setStyle("-fx-font-size: 15px; -fx-text-fill: #222; -fx-padding: 2 0 0 0;");
+                    String time = message.getTimestamp() != null ? message.getTimestamp().toLocalTime().withNano(0).toString() : "";
+                    Label timeLabel = new Label(time);
+                    timeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #888; -fx-padding: 2 0 0 0;");
+                    vbox.getChildren().addAll(sender, content, timeLabel);
+                    vbox.setSpacing(0);
+                    setGraphic(vbox);
+                    setText(null);
+                    setStyle("");
                 }
             }
         });
+        messageList.getItems().clear();
+        messageHistory.clear();
     }
 
     @FXML
@@ -64,6 +85,9 @@ public class ChatController {
                         connectButton.setDisable(true);
                         usernameField.setDisable(true);
                         showAlert("Sucesso", "Conectado ao servidor!");
+                        // Limpa histórico local ao conectar
+                        messageList.getItems().clear();
+                        messageHistory.clear();
                     });
                 }
 
@@ -71,8 +95,11 @@ public class ChatController {
                 public void onMessage(String message) {
                     Message chatMessage = gson.fromJson(message, Message.class);
                     Platform.runLater(() -> {
-                        messageHistory.add(chatMessage);
-                        updateMessageList();
+                        // Evita duplicatas no histórico
+                        if (!messageHistory.contains(chatMessage)) {
+                            messageHistory.add(chatMessage);
+                            updateMessageList();
+                        }
                     });
                 }
 
@@ -159,15 +186,7 @@ public class ChatController {
 
     private void updateMessageList() {
         messageList.getItems().clear();
-        for (Message message : messageHistory) {
-            String displayText = String.format("[%s] %s: %s",
-                    message.getTimestamp(),
-                    message.getSender(),
-                    message.getType() == Message.MessageType.FILE ? 
-                            "Enviou um arquivo: " + message.getContent() : 
-                            message.getContent());
-            messageList.getItems().add(displayText);
-        }
+        messageList.getItems().addAll(messageHistory);
         messageList.scrollTo(messageList.getItems().size() - 1);
     }
 

@@ -7,27 +7,24 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.eduardowanderley.controller.ChatController"
-      spacing="10" styleClass="chat-container">
-    
-    <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
-    </padding>
-
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <TextField fx:id="usernameField" promptText="Seu nome" HBox.hgrow="ALWAYS"/>
-        <Button fx:id="connectButton" text="Conectar" onAction="#handleConnect"/>
+      spacing="0" styleClass="chat-container">
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT" spacing="10">
+        <Label text="💬 Chat em Tempo Real" styleClass="header-title" />
     </HBox>
-
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <TextField fx:id="roomField" promptText="Nome da sala" HBox.hgrow="ALWAYS"/>
-        <Button fx:id="joinRoomButton" text="Entrar na Sala" onAction="#handleJoinRoom"/>
-    </HBox>
-
-    <ListView fx:id="messageList" VBox.vgrow="ALWAYS"/>
-
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <TextField fx:id="messageField" promptText="Digite sua mensagem" HBox.hgrow="ALWAYS"/>
-        <Button fx:id="sendButton" text="Enviar" onAction="#handleSendMessage"/>
-        <Button fx:id="fileButton" text="Arquivo" onAction="#handleFileUpload"/>
-    </HBox>
+    <VBox spacing="10" style="-fx-padding: 20 20 10 20;">
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <TextField fx:id="usernameField" promptText="Seu nome" HBox.hgrow="ALWAYS" />
+            <Button fx:id="connectButton" text="Conectar" onAction="#handleConnect" styleClass="main-btn" />
+        </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <TextField fx:id="roomField" promptText="Nome da sala" HBox.hgrow="ALWAYS" />
+            <Button fx:id="joinRoomButton" text="Entrar na Sala" onAction="#handleJoinRoom" styleClass="main-btn" />
+        </HBox>
+        <ListView fx:id="messageList" VBox.vgrow="ALWAYS" styleClass="message-list" />
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <TextField fx:id="messageField" promptText="Digite sua mensagem..." HBox.hgrow="ALWAYS" styleClass="message-field" />
+            <Button fx:id="sendButton" text="Enviar" onAction="#handleSendMessage" styleClass="send-btn" />
+            <Button fx:id="fileButton" text="📎" onAction="#handleFileUpload" styleClass="file-btn" />
+        </HBox>
+    </VBox>
 </VBox> 
